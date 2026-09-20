@@ -39,6 +39,7 @@
     text-decoration: none;
     transition: background-color 150ms, color 150ms;
   }
+  .nav-menu__item:is(:hover, :active, [data-hovered], [data-pressed]) { text-decoration: none; }
   .nav-menu__item[data-hovered]:not([data-disabled]):not([data-active]) { background: var(--default); color: var(--foreground); }
   .nav-menu__item[data-active] { background: var(--accent-soft); color: var(--accent-soft-foreground); }
   .nav-menu__item[data-focus-visible] { outline: 2px solid var(--focus); outline-offset: -2px; }

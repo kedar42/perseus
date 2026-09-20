@@ -9,7 +9,7 @@ The package contains presentation and interaction only. Applications supply link
 Install the versioned GitHub release with Bun:
 
 ```sh
-bun add https://github.com/kedar42/perseus/releases/download/v0.1.0/kedar42-perseus-0.1.0.tgz
+bun add https://github.com/kedar42/perseus/releases/download/v0.1.1/kedar42-perseus-0.1.1.tgz
 ```
 
 Import from `@kedar42/perseus`. React 19 and HeroUI 3 are peer dependencies supplied by your app. The release includes built JavaScript, type declarations, and CSS; no local Perseus checkout or build is needed by consumers. This package is not currently published on the npm registry.
@@ -103,4 +103,4 @@ Perseus's original code is available under the [MIT license](LICENSE). This is a
 
 ## Release
 
-Run the checks above, then `bun pm pack --ignore-scripts --filename /tmp/kedar42-perseus-0.1.0.tgz` after building. Publish the archive as an asset of the matching GitHub version tag. Consumers pin a release URL and the archive integrity in their lockfile. Do not replace assets of published versions; release a new version for changes.
+Run the checks above, then `bun pm pack --ignore-scripts --filename /tmp/kedar42-perseus-0.1.1.tgz` after building. Publish the archive as an asset of the matching GitHub version tag. Consumers pin a release URL and the archive integrity in their lockfile. Do not replace assets of published versions; release a new version for changes.
