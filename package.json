@@ -1,12 +1,9 @@
 {
   "name": "@kedar42/perseus",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Community components for HeroUI",
   "type": "module",
   "packageManager": "bun@1.3.14",
-  "engines": {
-    "bun": ">=1.3.14"
-  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -23,19 +20,20 @@
     "**/*.css"
   ],
   "scripts": {
-    "build": "bun build src/index.ts --production --banner '\"use client\";' --target browser --format esm --packages external --outdir dist && bun run declarations && cp src/styles.css dist/styles.css",
+    "build": "NODE_ENV=production bun build src/index.ts --banner '\"use client\";' --target browser --format esm --packages external --outdir dist && bun run declarations && cp src/styles.css dist/styles.css",
     "declarations": "bun --bun tsc --project tsconfig.build.json",
     "typecheck": "bun --bun tsc --noEmit",
     "test": "bun --bun vitest run",
     "test:watch": "bun --bun vitest",
     "lint": "bun --bun eslint .",
-    "test:package": "NODE_ENV=production bun tests/package-smoke.ts"
+    "test:package": "NODE_ENV=production bun tests/package-smoke.ts",
+    "prepack": "bun run build"
   },
   "peerDependencies": {
     "@heroui/react": "^3.2.5",
     "@heroui/styles": "^3.2.5",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@heroui/react": "3.2.5",

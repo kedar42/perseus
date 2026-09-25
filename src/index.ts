@@ -1,17 +1,22 @@
 "use client";
 
-import { NavMenuRoot, NavMenuHeader, NavMenuToggle, NavMenuContent, NavMenuFooter, NavMenuLabel, NavMenuItem, NavMenuAction } from "./nav-menu.js";
+import { NavMenuRoot, NavMenuHeader, NavMenuToggle, NavMenuApp, NavMenuContent, NavMenuFooter, NavMenuSection, NavMenuItem, NavMenuCategory } from "./nav-menu.js";
 
 export const NavMenu = Object.assign(NavMenuRoot, {
   Root: NavMenuRoot,
   Header: NavMenuHeader,
   Toggle: NavMenuToggle,
+  App: NavMenuApp,
   Content: NavMenuContent,
   Footer: NavMenuFooter,
-  Label: NavMenuLabel,
+  Section: NavMenuSection,
   Item: NavMenuItem,
-  Action: NavMenuAction,
+  Category: NavMenuCategory,
 });
 
-export { NavMenuRoot, NavMenuHeader, NavMenuToggle, NavMenuContent, NavMenuFooter, NavMenuLabel, NavMenuItem, NavMenuAction };
-export type { NavMenuRootProps, NavMenuToggleProps, NavMenuItemProps, NavMenuActionProps } from "./nav-menu.js";
+export { NavMenuRoot, NavMenuHeader, NavMenuToggle, NavMenuApp, NavMenuContent, NavMenuFooter, NavMenuSection, NavMenuItem, NavMenuCategory };
+export { useNavMenu } from "./nav-menu.js";
+export type {
+  NavMenuState, NavMenuMode, NavMenuSide, NavMenuVariant, NavMenuRootProps, NavMenuHeaderProps, NavMenuToggleProps, NavMenuAppProps,
+  NavMenuContentProps, NavMenuFooterProps, NavMenuSectionProps, NavMenuItemProps, NavMenuLinkItemProps, NavMenuButtonItemProps, NavMenuCategoryProps,
+} from "./nav-menu.js";

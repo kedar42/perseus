@@ -1,7 +1,18 @@
 @layer components {
-  .nav-menu {
+  .nav-menu, .nav-menu__popover {
     --nav-menu-width: 15rem;
-    --nav-menu-collapsed-width: 4.5rem;
+    --nav-menu-compact-width: 4.5rem;
+    --nav-menu-padding: 0.75rem;
+    --nav-menu-gap: 0.5rem;
+    --nav-menu-item-height: 2.75rem;
+    --nav-menu-item-padding-block: 0.5rem;
+    --nav-menu-item-padding-inline: 0.75rem;
+    --nav-menu-item-gap: 0.75rem;
+    --nav-menu-item-radius: var(--radius-xl, 0.75rem);
+    --nav-menu-item-font-size: 0.875rem;
+    --nav-menu-indent: 2rem;
+  }
+  .nav-menu {
     display: flex;
     flex-direction: column;
     width: var(--nav-menu-width);
@@ -10,50 +21,89 @@
     flex-shrink: 0;
     overflow: hidden;
     box-sizing: border-box;
-    border-inline-end: 1px solid var(--separator);
     background: var(--surface);
-    padding: 0.75rem;
-    transition: width 250ms ease-in-out;
+    padding: var(--nav-menu-padding);
+    transition: width 250ms ease-in-out, margin 250ms ease-in-out;
   }
-  .nav-menu[data-collapsed] { width: var(--nav-menu-collapsed-width); }
-  .nav-menu__header { display: flex; align-items: center; gap: 0.75rem; min-height: 3rem; flex-shrink: 0; margin-block-end: 1.25rem; }
-  .nav-menu__content { display: flex; flex: 1; flex-direction: column; gap: 0.5rem; overflow-y: auto; overflow-x: hidden; min-height: 0; }
-  .nav-menu__footer { display: flex; flex-direction: column; gap: 0.5rem; flex-shrink: 0; margin-block-start: auto; padding-block-start: 1rem; }
-  .nav-menu [data-slot="nav-menu-toggle"] { width: 2.75rem; height: 2.75rem; flex-shrink: 0; border-radius: var(--radius-xl, 0.75rem); color: var(--muted); }
+  .nav-menu[data-compact] { width: var(--nav-menu-compact-width); }
+  .nav-menu:not([data-mode="overlay"])[data-variant="sidebar"][data-side="start"] { border-inline-end: 1px solid var(--separator); }
+  .nav-menu:not([data-mode="overlay"])[data-variant="sidebar"][data-side="end"] { border-inline-start: 1px solid var(--separator); }
+  .nav-menu:not([data-mode="overlay"])[data-variant="floating"] { border-radius: var(--radius-3xl, 1.5rem); box-shadow: var(--surface-shadow); }
+
+  /* An open compact pane overlays the page; the negative margin keeps its layout footprint at the compact width. */
+  .nav-menu[data-mode="compact"][data-open] { position: relative; z-index: 30; box-shadow: var(--overlay-shadow, var(--surface-shadow)); }
+  .nav-menu[data-mode="compact"][data-open][data-side="start"] { margin-inline-end: calc(var(--nav-menu-compact-width) - var(--nav-menu-width)); }
+  .nav-menu[data-mode="compact"][data-open][data-side="end"] { margin-inline-start: calc(var(--nav-menu-compact-width) - var(--nav-menu-width)); }
+
+  .nav-menu[data-mode="overlay"] { background: transparent; }
+  .nav-menu__drawer { width: auto; height: 100%; padding: 0; }
+
+  .nav-menu__header { display: flex; align-items: center; gap: var(--nav-menu-item-gap); min-height: calc(var(--nav-menu-item-height) + 0.25rem); flex-shrink: 0; margin-block-end: 1.25rem; }
+  .nav-menu__content { display: flex; flex: 1; flex-direction: column; gap: var(--nav-menu-gap); overflow-y: auto; overflow-x: hidden; min-height: 0; }
+  .nav-menu__footer { display: flex; flex-direction: column; gap: var(--nav-menu-gap); flex-shrink: 0; margin-block-start: auto; padding-block-start: 1rem; }
+  .nav-menu__section { display: flex; flex-direction: column; gap: var(--nav-menu-gap); }
+  .nav-menu__content > .nav-menu__section + .nav-menu__section { margin-block-start: 0.75rem; }
+  .nav-menu__section-label {
+    padding-inline: var(--nav-menu-item-padding-inline);
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: opacity 200ms ease-in-out;
+  }
+
+  .nav-menu [data-slot="nav-menu-toggle"] { width: var(--nav-menu-item-height); height: var(--nav-menu-item-height); flex-shrink: 0; border-radius: var(--nav-menu-item-radius); color: var(--muted); }
   .nav-menu [data-slot="nav-menu-toggle"][data-hovered] { color: var(--foreground); }
-  .nav-menu__label { white-space: nowrap; opacity: 1; transition: opacity 200ms ease-in-out, visibility 200ms; }
-  .nav-menu[data-collapsed] .nav-menu__label { opacity: 0; visibility: hidden; }
+
+  /* The default icon is drawn for a start-side menu in LTR and mirrors when exactly one of those flips. */
+  .nav-menu[data-side="end"]:dir(ltr) .nav-menu__toggle-icon,
+  .nav-menu[data-side="start"]:dir(rtl) .nav-menu__toggle-icon { transform: scaleX(-1); }
+
+  .nav-menu__app { display: inline-flex; min-width: 0; align-items: center; gap: 0.5rem; font-weight: 600; white-space: nowrap; opacity: 1; transition: opacity 200ms ease-in-out, visibility 200ms; }
+  .nav-menu__app-icon { display: inline-flex; flex-shrink: 0; }
+
   .nav-menu__item {
     display: flex;
     width: 100%;
-    min-height: 2.75rem;
+    min-height: var(--nav-menu-item-height);
     flex-shrink: 0;
     align-items: center;
     justify-content: flex-start;
-    gap: 0.75rem;
+    gap: var(--nav-menu-item-gap);
     overflow: hidden;
-    border-radius: var(--radius-xl, 0.75rem);
-    padding: 0.5rem 0.75rem;
+    box-sizing: border-box;
+    border-radius: var(--nav-menu-item-radius);
+    padding: var(--nav-menu-item-padding-block) var(--nav-menu-item-padding-inline);
     color: var(--foreground);
-    font-size: 0.875rem;
+    font-size: var(--nav-menu-item-font-size);
     font-weight: 500;
     text-align: start;
     text-decoration: none;
-    transition: background-color 150ms, color 150ms;
+    transition: background-color 150ms, color 150ms, padding 250ms ease-in-out;
   }
   .nav-menu__item:is(:hover, :active, [data-hovered], [data-pressed]) { text-decoration: none; }
-  .nav-menu__item[data-hovered]:not([data-disabled]):not([data-active]) { background: var(--default); color: var(--foreground); }
-  .nav-menu__item[data-active] { background: var(--accent-soft); color: var(--foreground); }
+  .nav-menu__item[data-hovered]:not([data-disabled]):not([data-selected]) { background: var(--default); color: var(--foreground); }
+  .nav-menu__item[data-selected] { background: var(--accent-soft); color: var(--foreground); }
   .nav-menu__item[data-focus-visible] { outline: 2px solid var(--focus); outline-offset: -2px; }
   .nav-menu__item[data-disabled] { cursor: default; }
   .nav-menu__item-icon { display: inline-flex; flex-shrink: 0; width: 1.25rem; align-items: center; justify-content: center; color: var(--muted); transition: color 150ms; }
   .nav-menu__item[data-hovered] .nav-menu__item-icon { color: inherit; }
-  .nav-menu__item[data-active] .nav-menu__item-icon { color: var(--accent-soft-foreground); }
+  .nav-menu__item[data-selected] .nav-menu__item-icon { color: var(--accent-soft-foreground); }
   .nav-menu__item-label { flex: 1; min-width: 0; white-space: nowrap; opacity: 1; transition: opacity 200ms ease-in-out; }
   .nav-menu__item-end { display: inline-flex; flex-shrink: 0; align-items: center; opacity: 1; transition: opacity 200ms ease-in-out; }
-  .nav-menu[data-collapsed] :is(.nav-menu__item-label, .nav-menu__item-end) { opacity: 0; }
   .nav-menu__item-description { display: block; color: var(--muted); font-size: 0.75rem; font-weight: 400; }
+
+  .nav-menu__sub-items { display: flex; flex-direction: column; gap: var(--nav-menu-gap); padding-block-start: var(--nav-menu-gap); }
+  .nav-menu__sub-items .nav-menu__item { padding-inline-start: calc(var(--nav-menu-item-padding-inline) + var(--nav-menu-indent)); }
+
+  .nav-menu__popover-dialog { display: flex; min-width: 12rem; flex-direction: column; gap: var(--nav-menu-gap); padding: 0.5rem; outline: none; }
+  .nav-menu__popover-dialog > .nav-menu__section-label { padding-block: 0.25rem; }
+
+  .nav-menu[data-compact] :is(.nav-menu__item-label, .nav-menu__item-end, .nav-menu__section-label) { opacity: 0; }
+  .nav-menu[data-compact] .nav-menu__app { opacity: 0; visibility: hidden; }
+
   @media (prefers-reduced-motion: reduce) {
-    .nav-menu, .nav-menu__label, .nav-menu__item, .nav-menu__item-icon, .nav-menu__item-label, .nav-menu__item-end { transition: none; }
+    .nav-menu, .nav-menu__app, .nav-menu__section-label, .nav-menu__item, .nav-menu__item-icon, .nav-menu__item-label, .nav-menu__item-end { transition: none; }
   }
 }
