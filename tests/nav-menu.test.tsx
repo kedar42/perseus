@@ -82,3 +82,12 @@ test("actions are buttons with item styling that can trigger HeroUI overlays", a
   expect(onAction).toHaveBeenCalledOnce();
   expect(onAction.mock.calls[0][0]).toBe("logout");
 });
+
+test("the default toggle icon points toward the next state", async () => {
+  const user = userEvent.setup();
+  render(<NavMenu><NavMenu.Toggle /></NavMenu>);
+  const arrow = () => screen.getByRole("button").querySelectorAll("path")[1].getAttribute("d");
+  expect(arrow()).toBe("m16 15-3-3 3-3");
+  await user.click(screen.getByRole("button"));
+  expect(arrow()).toBe("m14 9 3 3-3 3");
+});
