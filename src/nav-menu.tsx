@@ -83,27 +83,58 @@ export function NavMenuToggle({ expandLabel = "Expand navigation", collapseLabel
   );
 }
 
-export interface NavMenuItemProps extends Omit<ComponentPropsWithRef<typeof Link>, "children"> {
+interface NavMenuItemContentProps {
   children: ReactNode;
   startContent?: ReactNode;
+  endContent?: ReactNode;
   description?: ReactNode;
   textValue?: string;
+}
+
+function NavMenuItemContent({ children, startContent, endContent, description }: NavMenuItemContentProps) {
+  return (
+    <>
+      {startContent && <span className="nav-menu__item-icon" aria-hidden="true">{startContent}</span>}
+      <span className="nav-menu__item-label">
+        {children}
+        {description && <span className="nav-menu__item-description">{description}</span>}
+      </span>
+      {endContent && <span className="nav-menu__item-end">{endContent}</span>}
+    </>
+  );
+}
+
+function withItemClass<S>(className: string | ((state: S) => string) | undefined) {
+  return (state: S) => ["nav-menu__item", typeof className === "function" ? className(state) : className].filter(Boolean).join(" ");
+}
+
+export interface NavMenuItemProps extends Omit<ComponentPropsWithRef<typeof Link>, "children">, NavMenuItemContentProps {
   isActive?: boolean;
 }
 
-export function NavMenuItem({ children, startContent, description, textValue, isActive = false, className, ...props }: NavMenuItemProps) {
+export function NavMenuItem({ children, startContent, endContent, description, textValue, isActive = false, className, ...props }: NavMenuItemProps) {
   const { isCollapsed } = useNavMenu();
   return (
     <Tooltip isDisabled={!isCollapsed}>
       <Link {...props} aria-label={props["aria-label"] ?? textValue} aria-current={isActive ? "page" : undefined}
-        data-slot="nav-menu-item" data-active={isActive || undefined}
-        className={(state) => ["nav-menu__item", typeof className === "function" ? className(state) : className].filter(Boolean).join(" ")}>
-        {startContent && <span className="nav-menu__item-icon" aria-hidden="true">{startContent}</span>}
-        <span className="nav-menu__item-label">
-          {children}
-          {description && <span className="nav-menu__item-description">{description}</span>}
-        </span>
+        data-slot="nav-menu-item" data-active={isActive || undefined} className={withItemClass(className)}>
+        <NavMenuItemContent startContent={startContent} endContent={endContent} description={description}>{children}</NavMenuItemContent>
       </Link>
+      <Tooltip.Content placement="right">{textValue ?? children}</Tooltip.Content>
+    </Tooltip>
+  );
+}
+
+export interface NavMenuActionProps extends Omit<ComponentPropsWithRef<typeof Button>, "children" | "variant" | "size" | "isIconOnly" | "fullWidth">, NavMenuItemContentProps {}
+
+export function NavMenuAction({ children, startContent, endContent, description, textValue, className, ...props }: NavMenuActionProps) {
+  const { isCollapsed } = useNavMenu();
+  return (
+    <Tooltip isDisabled={!isCollapsed}>
+      <Button variant="ghost" {...props} aria-label={props["aria-label"] ?? textValue}
+        data-slot="nav-menu-action" className={withItemClass(className)}>
+        <NavMenuItemContent startContent={startContent} endContent={endContent} description={description}>{children}</NavMenuItemContent>
+      </Button>
       <Tooltip.Content placement="right">{textValue ?? children}</Tooltip.Content>
     </Tooltip>
   );

@@ -1,6 +1,6 @@
 # Perseus
 
-Independent community components for HeroUI 3. Named after the Greek hero Perseus. Currently exports **NavMenu**, a collapsible navigation rail with animated width, accessible links, active/disabled states, collapsed tooltips, and header/content/footer slots.
+Independent community components for HeroUI 3. Named after the Greek hero Perseus. Currently exports **NavMenu**, a collapsible navigation rail with animated width, accessible links and actions, active/disabled states, collapsed tooltips, trailing item content, and header/content/footer slots.
 
 The package contains presentation and interaction only. Applications supply links, icons, labels, active state, responsive placement, and optional persistence. React and HeroUI are peer dependencies. Use native HeroUI controls for buttons, dialogs, drawers, and cards.
 
@@ -9,7 +9,7 @@ The package contains presentation and interaction only. Applications supply link
 Install the versioned GitHub release with Bun:
 
 ```sh
-bun add https://github.com/kedar42/perseus/releases/download/v0.1.1/kedar42-perseus-0.1.1.tgz
+bun add https://github.com/kedar42/perseus/releases/download/v0.2.0/kedar42-perseus-0.2.0.tgz
 ```
 
 Import from `@kedar42/perseus`. React 19 and HeroUI 3 are peer dependencies supplied by your app. The release includes built JavaScript, type declarations, and CSS; no local Perseus checkout or build is needed by consumers. This package is not currently published on the npm registry.
@@ -57,6 +57,10 @@ import { NavMenu } from "@kedar42/perseus";
     <NavMenu.Item href="/library" isActive startContent={<LibraryIcon />}>
       Library
     </NavMenu.Item>
+    <NavMenu.Item href="/inbox" startContent={<InboxIcon />} endContent={<Chip size="sm">3</Chip>}
+      textValue="Inbox, 3 unread">
+      Inbox
+    </NavMenu.Item>
     <NavMenu.Item href="/requests" isDisabled description="Coming soon"
       textValue="Requests — coming soon" startContent={<RequestsIcon />}>
       Requests
@@ -64,11 +68,15 @@ import { NavMenu } from "@kedar42/perseus";
   </NavMenu.Content>
   <NavMenu.Footer>
     <NavMenu.Item href="/settings" startContent={<SettingsIcon />}>Settings</NavMenu.Item>
+    <Dropdown>
+      <NavMenu.Action startContent={<Avatar size="sm">…</Avatar>} textValue="Account">Account</NavMenu.Action>
+      <Dropdown.Popover placement="right bottom">…</Dropdown.Popover>
+    </Dropdown>
   </NavMenu.Footer>
 </NavMenu>
 ```
 
-`LibraryIcon`, `RequestsIcon`, and `SettingsIcon` are application-supplied icons. Always provide a meaningful menu label. Items remain ordinary links; they use standard Tab navigation rather than ARIA menu semantics.
+`LibraryIcon`, `InboxIcon`, `RequestsIcon`, and `SettingsIcon` are application-supplied icons; `Chip`, `Dropdown`, and `Avatar` come from HeroUI. Always provide a meaningful menu label. Items remain ordinary links and actions remain ordinary buttons; they use standard Tab navigation rather than ARIA menu semantics.
 
 | Part | API |
 | --- | --- |
@@ -76,9 +84,12 @@ import { NavMenu } from "@kedar42/perseus";
 | `NavMenu.Header`, `.Content`, `.Footer` | Native `div` props/ref |
 | `NavMenu.Label` | Native `span` props/ref; hides and makes its contents inert when collapsed |
 | `NavMenu.Toggle` | HeroUI Button props/ref, `expandLabel`, `collapseLabel`; default icon can be replaced with children |
-| `NavMenu.Item` | HeroUI Link props/ref, `isActive`, `startContent`, `description`, `textValue`, and React node children |
+| `NavMenu.Item` | HeroUI Link props/ref, `isActive`, `startContent`, `endContent`, `description`, `textValue`, and React node children |
+| `NavMenu.Action` | HeroUI Button props/ref (except `variant`, `size`, `isIconOnly`, `fullWidth`), `startContent`, `endContent`, `description`, `textValue`, and React node children |
 
-All parts also have named exports (`NavMenuRoot`, `NavMenuHeader`, etc.). Items accept `href`, `isDisabled`, `onPress`, `render`, and static/function `className` through HeroUI Link. `textValue` supplies the accessible name and collapsed tooltip when children are rich content. `isActive` supplies `aria-current="page"`. Use `startContent` for icons; collapsed labels stay accessible to screen readers.
+All parts also have named exports (`NavMenuRoot`, `NavMenuHeader`, etc.). Items accept `href`, `isDisabled`, `onPress`, `render`, and static/function `className` through HeroUI Link. `textValue` supplies the accessible name and collapsed tooltip when children are rich content. `isActive` supplies `aria-current="page"`. Use `startContent` for icons and `endContent` for trailing counts, chips, or shortcuts; both the label and `endContent` fade out when collapsed, so put anything the collapsed rail must still show (such as a HeroUI `Badge` on the icon) in `startContent` and summarize it in `textValue`. Collapsed labels stay accessible to screen readers.
+
+`NavMenu.Action` renders an item-styled HeroUI Button for rows that do something instead of navigating — sign out, a theme switch, or the trigger of a HeroUI `Dropdown`, `Popover`, or `Drawer`. Place it directly inside the overlay component as its trigger.
 
 For controlled state, pass `isCollapsed={collapsed}` and `onCollapsedChange={setCollapsed}`. Persistence belongs in the application. Toggle labels can be localized through `expandLabel` and `collapseLabel`.
 
@@ -103,4 +114,4 @@ Perseus's original code is available under the [MIT license](LICENSE). This is a
 
 ## Release
 
-Run the checks above, then `bun pm pack --ignore-scripts --filename /tmp/kedar42-perseus-0.1.1.tgz` after building. Publish the archive as an asset of the matching GitHub version tag. Consumers pin a release URL and the archive integrity in their lockfile. Do not replace assets of published versions; release a new version for changes.
+Run the checks above, then `bun pm pack --ignore-scripts --filename /tmp/kedar42-perseus-0.2.0.tgz` after building. Publish the archive as an asset of the matching GitHub version tag. Consumers pin a release URL and the archive integrity in their lockfile. Do not replace assets of published versions; release a new version for changes.

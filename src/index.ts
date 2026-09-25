@@ -1,6 +1,6 @@
 "use client";
 
-import { NavMenuRoot, NavMenuHeader, NavMenuToggle, NavMenuContent, NavMenuFooter, NavMenuLabel, NavMenuItem } from "./nav-menu.js";
+import { NavMenuRoot, NavMenuHeader, NavMenuToggle, NavMenuContent, NavMenuFooter, NavMenuLabel, NavMenuItem, NavMenuAction } from "./nav-menu.js";
 
 export const NavMenu = Object.assign(NavMenuRoot, {
   Root: NavMenuRoot,
@@ -10,7 +10,8 @@ export const NavMenu = Object.assign(NavMenuRoot, {
   Footer: NavMenuFooter,
   Label: NavMenuLabel,
   Item: NavMenuItem,
+  Action: NavMenuAction,
 });
 
-export { NavMenuRoot, NavMenuHeader, NavMenuToggle, NavMenuContent, NavMenuFooter, NavMenuLabel, NavMenuItem };
-export type { NavMenuRootProps, NavMenuToggleProps, NavMenuItemProps } from "./nav-menu.js";
+export { NavMenuRoot, NavMenuHeader, NavMenuToggle, NavMenuContent, NavMenuFooter, NavMenuLabel, NavMenuItem, NavMenuAction };
+export type { NavMenuRootProps, NavMenuToggleProps, NavMenuItemProps, NavMenuActionProps } from "./nav-menu.js";

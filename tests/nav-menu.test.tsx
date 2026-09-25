@@ -2,6 +2,7 @@ import { createRef } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, test, vi } from "vitest";
+import { Dropdown, Label } from "@heroui/react";
 import { NavMenu } from "../src";
 
 test("uncontrolled collapse updates the toggle and makes header content inert", async () => {
@@ -52,4 +53,32 @@ test("disabled items cannot activate and are skipped by keyboard navigation", as
   expect(onPress).not.toHaveBeenCalled();
   await user.tab();
   expect(screen.getByRole("link", { name: "Library" })).toHaveFocus();
+});
+
+test("end content renders after the label and keeps the link name from textValue", () => {
+  render(<NavMenu><NavMenu.Item href="/inbox" textValue="Inbox, 3 unread" endContent={<span>3</span>}>Inbox</NavMenu.Item></NavMenu>);
+  const link = screen.getByRole("link", { name: "Inbox, 3 unread" });
+  const end = screen.getByText("3").parentElement;
+  expect(end).toHaveClass("nav-menu__item-end");
+  expect(link.lastElementChild).toBe(end);
+});
+
+test("actions are buttons with item styling that can trigger HeroUI overlays", async () => {
+  const user = userEvent.setup();
+  const onAction = vi.fn();
+  render(<NavMenu defaultCollapsed><NavMenu.Footer>
+    <Dropdown>
+      <NavMenu.Action textValue="Account" startContent={<svg />}>Account</NavMenu.Action>
+      <Dropdown.Popover><Dropdown.Menu onAction={onAction}>
+        <Dropdown.Item id="logout" textValue="Log out"><Label>Log out</Label></Dropdown.Item>
+      </Dropdown.Menu></Dropdown.Popover>
+    </Dropdown>
+  </NavMenu.Footer></NavMenu>);
+  const action = screen.getByRole("button", { name: "Account" });
+  expect(action).toHaveClass("nav-menu__item");
+  expect(action).toHaveAttribute("data-slot", "nav-menu-action");
+  await user.click(action);
+  await user.click(await screen.findByRole("menuitem", { name: "Log out" }));
+  expect(onAction).toHaveBeenCalledOnce();
+  expect(onAction.mock.calls[0][0]).toBe("logout");
 });
